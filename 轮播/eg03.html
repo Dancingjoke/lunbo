@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="js/JQuery.js"></script>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    
+    ul li {
+        float: left;
+        list-style: none;
+        margin-right: 10px;
+    }
+    
+    ul li:last-child {
+        margin: 0;
+    }
+    
+    ul li img {
+        width: 90px;
+        height: 90px;
+    }
+    
+    ul {
+        width: 490px;
+        margin-top: 10px;
+    }
+    
+    .middle img {
+        width: 490px;
+        height: 275.63px;
+        display: block;
+    }
+    
+    .middle {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .shadow {
+        width: 200px;
+        height: 112.5px;
+        background: gold;
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+    }
+    
+    .large {
+        position: fixed;
+        left: 500px;
+        top: 0;
+        width: 784px;
+        height: 441px;
+        overflow: hidden;
+        display: none;
+    }
+    
+    .large img {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+</style>
+<script>
+    $(function() {
+        var obj = {},
+            middleX,
+            middleY,
+            largeX,
+            largeY;
+        obj.smalls = $('ul li'); //缩略图LI
+        obj.middleBox = $('.middle'); //中等图展示区
+        obj.middleImage = obj.middleBox.find('img'); //中等图片
+        obj.shadow = obj.middleBox.find('div'); //遮罩层
+        obj.largeBox = $('.large'); //大图片展示区域
+        obj.largeImage = obj.largeBox.find('img'); //大图片
+        for (var i = 0; i < obj.smalls.length; i++) { //---缩略图点击事件，换相应的中图和大图
+            $(obj.smalls[i]).on('click', function() {
+                obj.middleImage.attr('src', 'images/' + (obj.smalls.index(this) + 1) + '.jpg');
+                obj.largeImage.attr('src', 'images/' + (obj.smalls.index(this) + 1) + '.jpg');
+            });
+        }
+        obj.middleBox.on('mouseenter', function() { //中等展示区进去事件，显示遮罩层和大图展示区
+            obj.shadow.show();
+            obj.largeBox.show();
+        });
+        obj.middleBox.on('mouseleave', function() { //中等展示区离开事件，隐藏遮罩层和大图展示区
+            obj.shadow.hide();
+            obj.largeBox.hide();
+        });
+        obj.middleBox.on('mousemove', function(ev) { //中等展示区移动事件
+            middleX = ev.clientX - 100
+            middleY = ev.clientY - 56.25;
+            if (ev.clientX - 100 < 0) { //----------------------------控制遮罩层不要超出中等展示区
+                middleX = 0;
+            } else if (ev.clientX - 100 > 290) {
+                middleX = 290;
+            }
+            if (ev.clientY - 56.25 < 0) {
+                middleY = 0;
+            } else if (ev.clientY - 56.25 > 275.63 - 112.5) {
+                middleY = 275.63 - 112.5;
+            } //--------------------------------------------------------------
+            obj.shadow.offset({
+                left: middleX,
+                top: middleY
+            });
+            obj.largeImage.offset({ //--------------------------大图移动距离
+                left: -middleX * 3.92 + 500, //难点首先取反然后乘相应比例 最重要的！别忘了大图展示区本身有500的left
+                top: -middleY * 3.92
+            }); //--------------------------------
+        })
+    });
+</script>
+
+<body>
+    <div class="middle">
+        <img src="images/1.jpg" alt="">
+        <div class="shadow"></div>
+    </div>
+    <div class="large">
+        <img src="images/1.jpg" alt="">
+    </div>
+    <ul>
+        <li><img src="images/1.jpg" alt=""></li>
+        <li><img src="images/2.jpg" alt=""></li>
+        <li><img src="images/3.jpg" alt=""></li>
+        <li><img src="images/4.jpg" alt=""></li>
+        <li><img src="images/5.jpg" alt=""></li>
+    </ul>
+</body>
+
+</html>
